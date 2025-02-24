@@ -1,29 +1,22 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace App\Http\Controllers;
 
-return new class extends Migration
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+
+class KategoriController extends Controller
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function index() 
     {
-        Schema::create('m_kategori', function (Blueprint $table) {
-            $table->id('kategori_id');
-            $table->string('kategori_kode', 10)->unique();
-            $table->string('kategori_nama', 100);
-            $table->timestamps();
-        });
-    }
+        $data = [
+            'kategori_kode' => 'SNK',
+            'kategori_nama' => 'Snack/Makanan Ringan',
+            'created_at' => now()
+        ];
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('m_kategori');
+        dd($data);
+        return 'Insert data baru berhasil';
     }
-};
+}
