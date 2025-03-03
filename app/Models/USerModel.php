@@ -10,7 +10,7 @@ class UserModel extends Model
     use HasFactory;
 
     protected $table = "m_user";
-    protected $primaryKey = "id";
+    protected $primaryKey = 'user_id';
 
     // The attributes that are mass assignable.
     /**

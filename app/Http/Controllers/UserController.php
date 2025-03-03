@@ -10,19 +10,9 @@ class UserController extends Controller
 {
     public function index()
     {
-        $data = [
-            'level_id' => 2,
-            'username' => 'manager_tiga',
-            'nama' => 'Manager 3',
-            'password' => Hash::make('12345'),
-        ];
-
-        // Simpan data ke database
-        UserModel::create($data);
-
-        // Ambil semua data dari tabel m_user
-        $user = UserModel::all();
-
+      $user = UserModel::findOr(20,['username', 'nama'], function(){
+        abort(404);
+      });
         // Pastikan view 'user' ada di resources/views/user.blade.php
         return view('user', ['data' => $user]);
     }
