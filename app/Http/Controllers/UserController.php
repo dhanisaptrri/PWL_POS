@@ -7,6 +7,7 @@ use App\Models\LevelModel;
 use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -33,29 +34,27 @@ class UserController extends Controller
     /**
      * Mengambil data user dalam bentuk JSON untuk DataTables.
      */
-    public function list(Request $request)
-    {
-        $users = UserModel::select('user_id', 'username', 'nama', 'level_id')
-            ->with('level');
-            
-         if ($request->has('level_id') && !empty($request->level_id)) {
-            $users->where('level_id', $request->level_id);
-        }
-        return DataTables::of($users)
-            ->addIndexColumn() // Menambahkan kolom index (DT_RowIndex)
-            ->addColumn('aksi', function ($user) { // Menambahkan kolom aksi
-                $btn = '<a href="' . url('/user/' . $user->user_id) . '" class="btn btn-info btn-sm">Detail</a> ';
-                $btn .= '<a href="' . url('/user/' . $user->user_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
-                $btn .= '<form class="d-inline-block" method="POST" action="' . url('/user/' . $user->user_id) . '">';
-                $btn .= csrf_field();
-                $btn .= method_field('DELETE');
-                $btn .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data ini?\');">Hapus</button>';
-                $btn .= '</form>';
-                return $btn;
-            })
-            ->rawColumns(['aksi']) // Memberitahu DataTables bahwa kolom aksi mengandung HTML
-            ->make(true);
-    }
+  public function list(Request $request)
+   {
+      $users = UserModel::select('user_id', 'username', 'nama', 'level_id')
+         ->with('level');
+
+      // Filter data user berdasarkan level_id
+      if ($request->level_id) {
+         $users->where('level_id', $request->level_id);
+      }
+
+      return DataTables::of($users)
+         ->addIndexColumn() // Menambahkan kolom index / no urut (default nama kolom: DT_RowIndex)
+         ->addColumn('aksi', function ($user) { // Menambahkan kolom aksi
+            $btn = '<button onclick="modalAction(\'' . url('/user/' . $user->user_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+            $btn .= '<button onclick="modalAction(\'' . url('/user/' . $user->user_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+            $btn .= '<button onclick="modalAction(\'' . url('/user/' . $user->user_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+            return $btn;
+         })
+         ->rawColumns(['aksi']) // Memberitahu bahwa kolom aksi adalah HTML
+         ->make(true);
+   }
      public function create()
     {
         $breadcrumb = (object) [
@@ -173,35 +172,35 @@ class UserController extends Controller
             ->with('level', $level); 
     }
 
-    public function store_ajax(Request $request) {
-        // cek apakah request berupa ajax
-        if($request->ajax() || $request->wantsJson()){
+    public function store_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'level_id'  => 'required|integer',
-                'username'  => 'required|string|min:3|unique:m_user,username',
-                'nama'      => 'required|string|max:100',
-                'password'  => 'required|min:6'
+                'level_id' => 'required|integer',
+                'username' => 'required|string|min:3|unique:m_user,username',
+                'nama' => 'required|string|max:100',
+                'password' => 'required|min:6'
             ];
-    
-            // use Illuminate\Support\Facades\Validator;
             $validator = Validator::make($request->all(), $rules);
-    
-            if($validator->fails()){
+            if ($validator->fails()) {
                 return response()->json([
-                    'status' => false, // response status, false: error/gagal, true: berhasil
+                    'status' => false,
                     'message' => 'Validasi Gagal',
-                    'msgField' => $validator->errors(), // pesan error validasi
+                    'msgField' => $validator->errors(),
                 ]);
             }
-    
-            UserModel::create($request->all());
+            UserModel::create([
+                'username' => $request->username,
+                'nama' => $request->nama,
+                'password' => bcrypt($request->password),
+                'level_id' => $request->level_id
+            ]);
             return response()->json([
                 'status' => true,
                 'message' => 'Data user berhasil disimpan'
             ]);
         }
-    
-        redirect('/');
+        return redirect('/user');
     }
     
 }
