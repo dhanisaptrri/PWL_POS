@@ -256,5 +256,47 @@ class UserController extends Controller
     return redirect('/');
 }
 
+    public function show_ajax(string $id) {
+        $user = UserModel::find($id);
+        $level = LevelModel::select('level_id', 'level_nama')->get();
+
+        return view('user.show_ajax', ['user' => $user, 'level' => $level]);
+    }
+
+
+    public function confirm_ajax(string $id) {
+        $user = UserModel::find($id);
+
+        return view('user.confirm_ajax', ['user' => $user]);
+    }
+
+    public function delete_ajax(Request $request, $id)
+    {
+        //cek apakah req dari ajax
+        if($request->ajax() || $request->wantsJson()){
+            $user = UserModel::find($id);
+            if($user){
+                try {
+                    $user->delete();
+                return response()->json([
+                    'status'=> true,
+                    'message'=> 'Data berhasil dihapus'
+                ]);
+                } catch (\Throwable $th) {
+                return response()->json([
+                    'status'=> false,
+                    'message'=> 'Data tidak bisa dihapus'
+                ]);
+                }
+                
+            }else{
+                return response()->json([
+                    'status'=> false,
+                    'message'=> 'Data tidak ditemuka'
+                ]);
+            }
+        } 
+        return redirect('/');   
+    }
     
 }
