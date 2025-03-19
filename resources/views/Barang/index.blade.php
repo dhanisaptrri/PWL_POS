@@ -5,8 +5,9 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <a href="{{ url('barang/create') }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus"></i> Tambah Barang
+            <a class="btn btn-sm btn-primary mt-1" href="{{ url('barang/create') }}">Tambah</a>
+            <button onclick="modalAction('{{ url('/barang/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah Ajax</button>
+        </div>
                 </a>
             </div>
         </div>
@@ -33,21 +34,28 @@
             </table>
         </div>
     </div>
+    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
 
 @push('js')
     <script>
-        $(document).ready(function() {
-            $('#table_barang').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ url('/barang/list') }}",
-                    type: "POST", // HARUS POST karena route kamu POST
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                },
+        function modalAction(url = '') {
+        $('#myModal').load(url, function() {
+            $('#myModal').modal('show');
+        });
+    }
+    var dataBarang;
+    $(document).ready(function() {
+        dataBarang = $('#table_barang').DataTable({
+            serverSide: true,
+            ajax: {
+                "url": "{{ url('barang/list') }}",
+                "dataType": "json",
+                "type": "POST",
+                "data": function(d) {
+                    d.kategori_id = $('#kategori_id').val();
+                }
+            },
                 columns: [
                     { data: 'DT_RowIndex' , orderable: false, searchable: false},   
                     { data: 'barang_kode', name: 'barang_kode' },

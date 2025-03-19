@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\BarangModel;
 use App\Models\KategoriModel;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class BarangController extends Controller
 {
@@ -42,14 +43,15 @@ class BarangController extends Controller
         ->addColumn('barang', function ($row) {
             return $row->barang->barang_nama ?? '-';
         })
-        ->addColumn('aksi', function($row){
-            $btn = '<a href="' . url('barang/' . $row->barang_id) . '" class="btn btn-info btn-sm me-1">Detail</a>';
-            $btn .= '<a href="'.url('barang/'.$row->barang_id.'/edit').'" class="btn btn-sm btn-warning">Edit</a>';
-            $btn .= ' <form method="POST" action="'.url('barang/'.$row->barang_id).'" style="display:inline;">';
-            $btn .= csrf_field().method_field('DELETE');
-            $btn .= '<button type="submit" class="btn btn-sm btn-danger">Hapus</button>';
-            $btn .= '</form>';
-            return $btn;
+        ->addColumn('aksi', function($barang){
+            $btn = '<button onclick="modalAction(\''.url('/barang/' . $barang->barang_id .
+            '/show_ajax').'\')" class="btn btn-info btn-sm">Detail</button> ';
+            $btn .= '<button onclick="modalAction(\''.url('/barang/' . $barang->barang_id .
+            '/edit_ajax').'\')" class="btn btn-warning btn-sm">Edit</button> ';
+            $btn .= '<button onclick="modalAction(\''.url('/barang/' . $barang->barang_id .
+            '/delete_ajax').'\')" class="btn btn-danger btn-sm">Hapus</button> ';
+            return $btn; 
+
         })
         ->rawColumns(['aksi'])
         ->make(true);
@@ -162,6 +164,115 @@ class BarangController extends Controller
         } catch (\Illuminate\Database\QueryException $e) {
             return redirect('/barang')->with('error', 'Barang tidak bisa dihapus karena masih digunakan pada transaksi');
         }
-    }   
+    } 
+    
+    public function create_ajax()
+    {
+        $kategori = KategoriModel::all(); //ambil data kategori untuk filter kategori
+        return view('barang.create_ajax', ['kategori' => $kategori]);
+    }
+
+    public function store_ajax(Request $request)
+    {
+    
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'barang_kode' => 'required|string|max:10|unique:m_barang,barang_kode',
+                'barang_nama' => 'required|string|max:50',
+                'kategori_id' => 'required',
+                'barang_satuan' => 'required|string|max:10',
+                'harga_beli' => 'required|numeric',
+                'harga_jual' => 'required|numeric',
+            ];
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors(),
+                ]);
+            }
+            BarangModel::create([
+                'barang_kode' => $request->barang_kode,
+                'barang_nama' => $request->barang_nama,
+                'kategori_id' => $request->kategori_id,
+                'barang_satuan' => $request->barang_satuan,
+                'harga_beli' => $request->harga_beli,
+                'harga_jual' => $request->harga_jual,
+            ]); 
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data Barang berhasil disimpan'
+            ]);
+        }
+        return redirect('/barang');
+    }
+
+    public function edit_ajax($id)
+    {
+        $barang = BarangModel::find($id);
+        $kategori = KategoriModel::all(); //ambil data kategori untuk filter kategori
+        return view('barang.edit_ajax', ['barang' => $barang, 'kategori' => $kategori]);
+    }
+
+    public function update_ajax(Request $request, $id)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'barang_kode' => 'required|string|max:10|unique:m_barang,barang_kode,' . $id . ',barang_id',
+                'barang_nama' => 'required|string|max:50',
+                'kategori_id' => 'required',
+                'barang_satuan' => 'required|string|max:10',
+                'harga_beli' => 'required|numeric',
+                'harga_jual' => 'required|numeric',
+            ];
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors(),
+                ]);
+            }
+            $barang = BarangModel::find($id);
+            $barang->update([
+                'barang_kode' => $request->barang_kode,
+                'barang_nama' => $request->barang_nama,
+                'kategori_id' => $request->kategori_id,
+                'barang_satuan' => $request->barang_satuan,
+                'harga_beli' => $request->harga_beli,
+                'harga_jual' => $request->harga_jual,
+            ]); 
+            return response()->json([
+                'status' => true,
+                'message' => 'Data Barang berhasil diubah'
+            ]);
+        }
+        return redirect('/barang');
+    }
+
+    public function show_ajax($id)
+    {
+        $barang = BarangModel::find($id);
+        $kategori = KategoriModel::all(); //ambil data kategori untuk filter kategori
+        return view('barang.show_ajax', ['barang' => $barang, 'kategori' => $kategori]);
+    }       
+
+    public function confirm_ajax($id)
+    {
+        $barang = BarangModel::find($id);
+        return view('barang.confirm_ajax', ['barang' => $barang]);
+    }
+
+    public function delete_ajax($id)
+    {
+        $barang = BarangModel::find($id);
+        $barang->delete();
+        return response()->json([
+            'status' => true,
+            'message' => 'Data Barang berhasil dihapus'
+        ]);
+    }
 }
       

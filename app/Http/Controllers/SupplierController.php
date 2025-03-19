@@ -7,6 +7,8 @@ use App\Models\SupplierModel;
 use App\Models\BarangModel;
 use Yajra\DataTables\Facades\DataTables;
 
+use function Laravel\Prompts\error;
+
 class SupplierController extends Controller
 {
     
@@ -37,14 +39,14 @@ class SupplierController extends Controller
     
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('aksi', function($row){
-                $btn = '<a href="' . url('supplier/' . $row->supplier_id) . '" class="btn btn-info btn-sm me-1">Detail</a>';
-                $btn .= '<a href="'.url('supplier/'.$row->supplier_id.'/edit').'" class="btn btn-sm btn-warning">Edit</a>';
-                $btn .= ' <form method="POST" action="'.url('supplier/'.$row->supplier_id).'" style="display:inline;">';
-                $btn .= csrf_field().method_field('DELETE');
-                $btn .= '<button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Yakin ingin hapus?\')">Hapus</button>';
-                $btn .= '</form>';
-                return $btn;
+            ->addColumn('aksi', function($supplier){
+                $btn = '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id .
+                    '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                $btn .= '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id .
+                    '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+                $btn .= '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id .
+                    '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+                    return $btn;
             })
             ->rawColumns(['aksi'])
             ->make(true);
@@ -144,6 +146,91 @@ class SupplierController extends Controller
         SupplierModel::destroy($id);
 
         return redirect('supplier')->with('success', 'Supplier berhasil dihapus');
+    }
+
+    public function create_ajax()
+    {
+        return view('supplier.create_ajax');
+    }
+
+    public function store_ajax(Request $request)
+    {
+        $request->validate([
+            'supplier_kode' => 'required',
+            'supplier_nama' => 'required',
+            'supplier_alamat' => 'required'
+        ]);
+
+        SupplierModel::create($request->all());
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Supplier berhasil ditambahkan'
+        ]);
+    }
+
+    public function edit_ajax($id)
+    {
+        $supplier = SupplierModel::find($id);
+
+        return view('supplier.edit_ajax', compact('supplier'));
+    }
+
+    public function update_ajax(Request $request, $id)
+    {
+        $request->validate([
+            'supplier_kode' => 'required',
+            'supplier_nama' => 'required',
+            'supplier_alamat' => 'required'
+        ]);
+
+        SupplierModel::find($id)->update($request->all());
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Supplier berhasil diubah'
+        ]);
+    }
+
+    public function show_ajax($id)
+    {
+        $supplier = SupplierModel::find($id);
+
+        return view('supplier.show_ajax', compact('supplier'));
+    }
+
+    public function confirm_ajax($id)
+    {
+        $supplier = SupplierModel::find($id);
+
+        return view('supplier.confirm_ajax', compact('supplier'));
+    }
+
+    public function delete_ajax(Request $request, $id)
+    {   
+        if ($request->ajax() || $request->wantsJson()) {
+            $supplier = SupplierModel::find($id);
+            if ($supplier) {
+                try {
+                    $supplier->delete();
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Data berhasil dihapus'
+                    ]);
+                } catch (\Illuminate\Database\QueryException $e) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Data gagal dihapus! (terdapat tabel lain yang terkait dengan data ini)'
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data tidak ditemukan'
+                ]);
+            }
+        }
+        return redirect('/supplier');
     }
     
 
