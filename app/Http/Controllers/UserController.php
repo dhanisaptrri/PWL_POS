@@ -234,13 +234,15 @@ class UserController extends Controller
         // Cek apakah data user ditemukan
         $check = UserModel::find($id);
         if ($check) {
-            // Jika password tidak diisi, hapus dari request agar tidak diubah
             if (!$request->filled('password')) {
                 $request->request->remove('password');
             }
-            
-            // Update data user
-            $check->update($request->all());
+
+            $data = $request->except(['password']);
+            if ($request->filled('password')) {
+                $data['password'] = bcrypt($request->password);
+            }
+            $check->update($data);
             return response()->json([
                 'status' => true,
                 'message' => 'Data berhasil diupdate'
