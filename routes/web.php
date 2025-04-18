@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\WelcomeController;
+use App\Models\Kategori;
 use App\Models\Supplier;
 use Illuminate\Support\Facades\Route;
 
@@ -53,6 +54,7 @@ Route::middleware(['auth'])->group(function(){
         Route::get('/user/import', [UserController::class, 'import']); // ajax form uplaod excel
         Route::post('/user/import_ajax', [UserController::class, 'import_ajax']); // ajax import excel
         route::get('/user/export_excel', [UserController::class, 'export_excel']); // ajax form uplaod excel
+        Route::get('/user/export_pdf', [UserController::class, 'export_pdf']); // ajax form uplaod excel
     });
     
 
@@ -68,6 +70,7 @@ Route::middleware(['auth'])->group(function(){
         Route::get('/level/import', [LevelController::class, 'import']); // ajax form uplaod excel
         Route::post('/level/import_ajax', [LevelController::class, 'import_ajax']); // ajax import excel
         route::get('/level/export_excel', [LevelController::class, 'export_excel']); // ajax form uplaod excel
+        Route::get('/level/export_pdf', [levelController::class, 'export_pdf']); // ajax form uplaod excel
     });
     
     
@@ -95,6 +98,7 @@ Route::middleware(['auth'])->group(function(){
         Route::get('/kategori/import', [KategoriController::class, 'import']); // ajax form uplaod excel
         Route::post('/kategori/import_ajax', [KategoriController::class, 'import_ajax']); // ajax import excel
         route::get('/kategori/export_excel', [KategoriController::class, 'export_excel']); // ajax form uplaod excel
+        Route::get('/kategori/export_pdf', [KategoriController::class, 'export_pdf']); // ajax form uplaod excel
     });
     
     Route::middleware(['authorize:ADM,MNG'])->group(function() {
@@ -149,5 +153,6 @@ Route::middleware(['auth'])->group(function(){
         Route::get('/supplier/import', [SupplierController::class, 'import']); // ajax form uplaod excel
         Route::post('/supplier/import_ajax', [SupplierController::class, 'import_ajax']); // ajax import excel
         route::get('/supplier/export_excel', [SupplierController::class, 'export_excel']); // ajax form uplaod excel
+        Route::get('/supplier/export_pdf', [SupplierController::class, 'export_pdf']); // ajax form uplaod excel
     });
 });

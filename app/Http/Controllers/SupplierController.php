@@ -7,6 +7,7 @@ use App\Models\SupplierModel;
 use App\Models\BarangModel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\PDF;
 use Yajra\DataTables\Facades\DataTables;
 
 use function Laravel\Prompts\error;
@@ -350,5 +351,23 @@ class SupplierController extends Controller
     
         $writer->save('php://output'); // simpan file ke output
         exit; // hentikan script setelah file di download
+    }
+
+    public function export_pdf()
+    {
+        $supplier = SupplierModel::select('supplier_kode', 'supplier_nama', 'supplier_alamat')
+            ->orderBy('supplier_kode')
+            ->orderBy('supplier_nama')
+            ->orderBy('supplier_alamat')
+            ->get();
+
+            
+        // use Barryvdh\DomPDF\Facade\PDF;
+        $pdf = PDF::loadView('supplier.export_pdf', ['supplier' => $supplier]);
+        $pdf->setPaper('a4', 'portrait'); // set ukuran kertas dan orientasi
+        $pdf->setOption('isRemoteEnabled', true); // set true jika ada gambar dari url
+        $pdf->render();
+        
+        return $pdf->stream('Data Supplier '.date('Y-m-d H:i:s').'.pdf');
     }
 }

@@ -8,7 +8,8 @@ use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Hash;
- use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Barryvdh\DomPDF\Facade\PDF; 
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -420,5 +421,20 @@ class UserController extends Controller
     
         $writer->save('php://output'); // simpan file ke output
         exit; // hentikan script setelah file di download
+    }
+    public function export_pdf()
+    {
+        $user = userModel::select('user_id', 'username', 'nama', 'level_id')  
+            ->orderBy('user_id')
+            ->orderBy('username')
+            ->orderBy('nama')
+            ->orderBy('level_id')
+            ->with('level')
+            ->get();      
+        $pdf = PDF::loadView('user.export_pdf', ['user' => $user]);
+        $pdf->setPaper('a4', 'portrait'); // set ukuran kertas dan orientasi
+        $pdf->setOption('isRemoteEnabled', true); // set true jika ada gambar dari url
+        $pdf->render();
+        return $pdf->stream('Data User '.date('Y-m-d H:i:s').'.pdf');
     }
 }
