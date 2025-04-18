@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\WelcomeController;
+use App\Models\Supplier;
 use Illuminate\Support\Facades\Route;
 
 Route::pattern('id','[0-9]+'); // artinya ketika ada parameter {id}, maka harus berupa angka
@@ -51,6 +52,7 @@ Route::middleware(['auth'])->group(function(){
         Route::delete('/user/{id}', [UserController::class, 'destroy']); // Menghapus data user
         Route::get('/user/import', [UserController::class, 'import']); // ajax form uplaod excel
         Route::post('/user/import_ajax', [UserController::class, 'import_ajax']); // ajax import excel
+        route::get('/user/export_excel', [UserController::class, 'export_excel']); // ajax form uplaod excel
     });
     
 
@@ -65,6 +67,7 @@ Route::middleware(['auth'])->group(function(){
         Route::delete('/level/{id}', [LevelController::class, 'destroy']); // untuk proses hapus data
         Route::get('/level/import', [LevelController::class, 'import']); // ajax form uplaod excel
         Route::post('/level/import_ajax', [LevelController::class, 'import_ajax']); // ajax import excel
+        route::get('/level/export_excel', [LevelController::class, 'export_excel']); // ajax form uplaod excel
     });
     
     
@@ -91,6 +94,7 @@ Route::middleware(['auth'])->group(function(){
         Route::delete('/kategori/{id}', [KategoriController::class, 'destroy']); // menghapus data user
         Route::get('/kategori/import', [KategoriController::class, 'import']); // ajax form uplaod excel
         Route::post('/kategori/import_ajax', [KategoriController::class, 'import_ajax']); // ajax import excel
+        route::get('/kategori/export_excel', [KategoriController::class, 'export_excel']); // ajax form uplaod excel
     });
     
     Route::middleware(['authorize:ADM,MNG'])->group(function() {
@@ -143,5 +147,6 @@ Route::middleware(['auth'])->group(function(){
         Route::delete('/supplier/{id}', [SupplierController::class, 'destroy']); // menghapus data user
         Route::get('/supplier/import', [SupplierController::class, 'import']); // ajax form uplaod excel
         Route::post('/supplier/import_ajax', [SupplierController::class, 'import_ajax']); // ajax import excel
+        route::get('/supplier/export_excel', [SupplierController::class, 'export_excel']); // ajax form uplaod excel
     });
 });

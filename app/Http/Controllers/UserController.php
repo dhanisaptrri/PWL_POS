@@ -370,4 +370,55 @@ class UserController extends Controller
          return redirect('/');
      }
     
+     public function export_excel() {
+        // ambil data user yang akan diexport
+        $user = UserModel::select('level_id', 'username', 'nama', 'password')->get();
+    
+        // load library excel
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet(); // ambil sheet yang aktif
+    
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Level ID');
+        $sheet->setCellValue('C1', 'Username');
+        $sheet->setCellValue('D1', 'Nama');
+        $sheet->setCellValue('E1', 'Password');
+    
+        $sheet->getStyle('A1:E1')->getFont()->setBold(true); // set bold pada header
+    
+        $no = 1;
+        $baris = 2;
+        foreach ($user as $key => $value) {
+            $sheet->setCellValue('A' . $baris, $no);
+            $sheet->setCellValue('B' . $baris, $value->level_id);
+            $sheet->setCellValue('C' . $baris, $value->username);
+            $sheet->setCellValue('D' . $baris, $value->nama);
+            $sheet->setCellValue('E' . $baris, $value->password);
+            $no++;
+            $baris++;
+        }
+    
+        // set lebar kolom
+        foreach (range('A', 'E') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+    
+        // set nama file
+        $sheet->setTitle('Data User');
+    
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data_User_' . date('Y-m-d_H-i-s') . '.xlsx';
+    
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: cache, must-revalidate');
+        header('Pragma: public');
+    
+        $writer->save('php://output'); // simpan file ke output
+        exit; // hentikan script setelah file di download
+    }
 }
