@@ -131,7 +131,8 @@ Route::middleware(['auth'])->group(function(){
         Route::get('/barang/{id}/edit', [BarangController::class, 'edit']); // menampilkan halaman form edit Barang
         Route::put('/barang/{id}', [BarangController::class, 'update']); // menyimpan perubahan data Barang
         Route::delete('/barang/{id}', [BarangController::class, 'destroy']); // menghapus data user
-        
+        Route::get('/barang/import', [BarangController::class, 'import']); // ajax form uplaod excel
+             Route::post('/barang/import_ajax', [BarangController::class, 'import_ajax']); // ajax import excel
     });
     
     Route::middleware(['authorize:ADM,MNG,STF'])->group(function () {
