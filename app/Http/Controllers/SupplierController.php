@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SupplierModel;
 use App\Models\BarangModel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 use function Laravel\Prompts\error;
@@ -232,6 +234,71 @@ class SupplierController extends Controller
         }
         return redirect('/supplier');
     }
-    
 
+    public function import(){
+        return view('supplier.import');
+    }
+
+    public function import_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'file_supplier' => 'required|mimes:xls,xlsx|max:1024',
+            ];
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status'   => false,
+                    'message'  => 'Validasi Gagal',
+                    'msgField' => $validator->errors(),
+                ]);
+            }
+            try {
+                $file = $request->file('file_supplier'); // ambil file dari request
+
+                $reader = IOFactory::createReader('Xlsx'); // load reader file excel
+                $reader->setReadDataOnly(true); // set reader hanya membaca data saja
+                $spreadsheet = $reader->load($file->getRealPath()); // load file excel
+                $sheet = $spreadsheet->getActiveSheet(); // ambil sheet aktif
+
+                $data = $sheet->toArray(null, false, true, true); //ambil data excel
+
+                $insert = [];
+                if (count($data) > 1) { // jika data lebih dari 1 baris
+                    foreach ($data as $baris => $value) {
+                        if ($baris > 1) { // baris ke 1 adalah header, maka lewati
+                            $insert[] = [
+                                'supplier_kode' => $value['A'],
+                                'supplier_nama' => $value['B'],
+                                'supplier_alamat' => $value['C'],
+                                'created_at' => now(),
+                            ];
+                        }
+                    }
+
+                    if (count($insert) > 0) {
+                        // inseert data ke database, jika data sudah ada, maka diabaikan
+                        SupplierModel::insertOrIgnore($insert); // insert data ke database
+                    }
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Data Supplier berhasil diimport',
+                        'redirect' => url('/'),
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Tidak ada data yang diimport'
+                    ]);
+                }
+
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Gagal mengimport data Supplier, silahkan coba lagi'
+                ]);
+            }
+        }
+        return redirect('/supplier');
+    }
 }
