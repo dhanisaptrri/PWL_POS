@@ -116,6 +116,8 @@ Route::middleware(['auth'])->group(function(){
         Route::delete('/barang/{id}', [BarangController::class, 'destroy']); // menghapus data user
         Route::get('/barang/import', [BarangController::class, 'import']); // ajax form uplaod excel
         Route::post('/barang/import_ajax', [BarangController::class, 'import_ajax']); // ajax import excel
+
+        route::get('/barang/export_excel', [BarangController::class, 'export_excel']); // ajax form uplaod excel
     });
     
     Route::middleware(['authorize:ADM,MNG,STF'])->group(function () {
