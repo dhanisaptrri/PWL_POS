@@ -122,6 +122,7 @@ Route::middleware(['auth'])->group(function(){
         Route::post('/barang/import_ajax', [BarangController::class, 'import_ajax']); // ajax import excel
 
         route::get('/barang/export_excel', [BarangController::class, 'export_excel']); // ajax form uplaod excel
+        Route::get('/barang/export_pdf', [BarangController::class, 'export_pdf']); // ajax form uplaod excel
     });
     
     Route::middleware(['authorize:ADM,MNG,STF'])->group(function () {
