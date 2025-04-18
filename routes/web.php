@@ -9,6 +9,7 @@ use App\Http\Controllers\LevelController;
 use App\Http\Controllers\WelcomeController;
 use App\Models\Kategori;
 use App\Models\Supplier;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::pattern('id','[0-9]+'); // artinya ketika ada parameter {id}, maka harus berupa angka
@@ -28,6 +29,8 @@ Route::middleware(['auth'])->group(function(){
     // masukkan semua route yang perlu autentikasi di sini
     
     Route::get('/', [WelcomeController::class, 'index']);
+
+    
     
     Route::middleware(['authorize:ADM'])->group(function () {
         Route::get('/user', [UserController::class, 'index']);       // Menampilkan halaman awal user
@@ -155,4 +158,11 @@ Route::middleware(['auth'])->group(function(){
         route::get('/supplier/export_excel', [SupplierController::class, 'export_excel']); // ajax form uplaod excel
         Route::get('/supplier/export_pdf', [SupplierController::class, 'export_pdf']); // ajax form uplaod excel
     });
+
+    // Route profile
+
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::post('/profile/update-foto', [ProfileController::class, 'updateFoto'])->name('profile.updateFoto');
+    
+
 });

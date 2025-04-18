@@ -1,4 +1,13 @@
 <div class="sidebar">
+    <<!-- Profile -->
+    <li class="nav-item">
+         <a href="{{ route('profile.index') }}" class="nav-link {{ ($activeMenu == 'profile') ? 'active' : '' }}">
+             <!-- Jika foto ada, tampilkan foto profil, jika tidak tampilkan ikon default -->
+             <img src="{{ Auth::user()->foto ? asset('uploads/foto_user/' . Auth::user()->foto) : asset('default-avatar.png') }}" 
+                  class="img-circle elevation-2" alt="User Image" style="width: 30px; height: 30px;">
+             <p>Profil Saya</p>
+         </a>
+     </li>
     <!-- SidebarSearch Form -->
     <div class="form-inline mt-2">
         <div class="input-group" data-widget="sidebar-search">
@@ -22,6 +31,12 @@
                     <p>Dashboard</p>
                 </a>
             </li>
+            <li class="nav-item">
+             <a href="{{ url('/profil')}}" class="nav-link {{ ($activeMenu == 'profil') ? 'active' : '' }}">
+               <i class="nav-icon fas fa-user"></i>
+               <p>Profil</p>
+             </a>
+           </li>
 
             <!-- Data Pengguna -->
             <li class="nav-header">Data Pengguna</li>
