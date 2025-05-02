@@ -7,6 +7,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\StokController;
+use App\Http\Controllers\PenjualanController;   
 use App\Models\Kategori;
 use App\Models\Supplier;
 use App\Http\Controllers\ProfileController;
@@ -18,20 +20,11 @@ Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'postlogin'])->name('login.aksi');
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
 Route::get('register', [AuthController::class, 'register'])->name('register');
- Route::post('register', [AuthController::class, 'postregister']);
-
-
-
 
 Route::middleware(['auth'])->group(function(){ 
-    // artinya semua route di dalam group ini harus login dulu
-
-    // masukkan semua route yang perlu autentikasi di sini
     
     Route::get('/', [WelcomeController::class, 'index']);
 
-    
-    
     Route::middleware(['authorize:ADM'])->group(function () {
         Route::get('/user', [UserController::class, 'index']);       // Menampilkan halaman awal user
         Route::post('/user/list', [UserController::class, 'list']);   // Menampilkan data user dalam bentuk json untuk datatables
@@ -158,6 +151,67 @@ Route::middleware(['auth'])->group(function(){
         route::get('/supplier/export_excel', [SupplierController::class, 'export_excel']); // ajax form uplaod excel
         Route::get('/supplier/export_pdf', [SupplierController::class, 'export_pdf']); // ajax form uplaod excel
     });
+
+    Route::middleware(['authorize:ADM,MNG,STF'])->group(function () {
+        // Route for viewing all stok (stock)
+        Route::get('/stok', [StokController::class, 'index'])->name('stok.index');
+        
+        // Route for listing data via AJAX
+        Route::post('/stok/list', [StokController::class, 'list'])->name('stok.list');
+        
+        // Route to show the create form for stok (using AJAX)
+        Route::get('/stok/create_ajax', [StokController::class, 'create_ajax'])->name('stok.create_ajax');
+        
+        // Route to store new stok (using AJAX)
+        Route::post('/stok/store_ajax', [StokController::class, 'store_ajax'])->name('stok.store_ajax');
+        
+        // Route to show stok details (using AJAX)
+        Route::get('/stok/{id}/show_ajax', [StokController::class, 'show_ajax'])->name('stok.show_ajax');
+        
+        // Route to show the edit form for stok (using AJAX)
+        Route::get('/stok/{id}/edit_ajax', [StokController::class, 'edit_ajax'])->name('stok.edit_ajax');
+        
+        // Route to update stok (using AJAX) - Changed from POST to PUT to match the form method
+        Route::put('/stok/{id}/update_ajax', [StokController::class, 'update_ajax'])->name('stok.update_ajax');
+        
+        // Show delete confirmation dialog
+        Route::get('/stok/{id}/delete_ajax', [StokController::class, 'delete_ajax'])->name('stok.delete_ajax');
+        
+        // Process delete request
+        Route::delete('/stok/{id}/delete_ajax', [StokController::class, 'destroy_ajax'])->name('stok.destroy_ajax');
+        
+        // Route for getting a list of barang (items)
+        Route::get('/stok/barang-list', [StokController::class, 'getBarangList'])->name('stok.barang-list');
+        
+        // Route for getting a list of suppliers
+        Route::get('/stok/supplier-list', [StokController::class, 'getSupplierList'])->name('stok.supplier-list');
+        
+        // Export routes
+        Route::get('/stok/export-excel', [StokController::class, 'export_excel'])->name('stok.export-excel');
+        Route::get('/stok/export-pdf', [StokController::class, 'export_pdf'])->name('stok.export-pdf');
+        
+        // Import routes
+        Route::get('/stok/import', [StokController::class, 'import'])->name('stok.import');
+        Route::post('/stok/import_ajax', [StokController::class, 'import_ajax'])->name('stok.import_ajax');
+    });
+
+
+Route::middleware(['authorize:ADM,MNG,STF'])->group(function () {
+    Route::get('/penjualan', [PenjualanController::class, 'index'])->name('penjualan.index');
+    Route::get('/penjualan/list', [PenjualanController::class, 'list'])->name('penjualan.list');
+    Route::post('/penjualan/list', [PenjualanController::class, 'list'])->name('penjualan.list');
+    Route::get('/penjualan/create_ajax', [PenjualanController::class, 'create_ajax'])->name('penjualan.create_ajax');
+    Route::post('/penjualan/store_ajax', [PenjualanController::class, 'store_ajax'])->name('penjualan.store_ajax');
+    Route::get('/penjualan/{id}/show_ajax', [PenjualanController::class, 'show_ajax'])->name('penjualan.show_ajax'); 
+    Route::get('/penjualan/{id}/delete_ajax', [PenjualanController::class, 'delete_ajax'])->name('penjualan.delete_ajax');
+    Route::delete('/penjualan/{id}/delete_ajax', [PenjualanController::class, 'destroy_ajax'])->name('penjualan.destroy_ajax');
+    Route::get('/penjualan/export-excel', [PenjualanController::class, 'export_excel'])->name('penjualan.export-excel');
+    Route::get('/penjualan/export-pdf', [PenjualanController::class, 'export_pdf'])->name('penjualan.export-pdf');
+   
+     
+});
+
+    
 
     // Route profile
 

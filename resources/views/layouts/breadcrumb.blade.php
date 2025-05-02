@@ -1,3 +1,10 @@
+@php
+    $breadcrumb = $breadcrumb ?? (object)[
+        'title' => 'Halaman',
+        'list' => ['Home', 'Halaman']
+    ];
+@endphp
+
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">

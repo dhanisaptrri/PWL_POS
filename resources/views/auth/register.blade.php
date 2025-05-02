@@ -48,18 +48,24 @@
                     <small class="text-danger error-text" id="error-password"></small>
 
                     <!-- Tambahan pilihan level -->
-                    <div class="input-group mb-3">
-                        <select name="level_kode" class="form-control">
-                            <option value="">-- Pilih Level --</option>
-                            <option value="ADM">Admin</option>
-                            <option value="MNG">Manager</option>
-                            <option value="STF">Staff / Kasir</option>
-                        </select>
-                        <div class="input-group-append">
-                            <div class="input-group-text"><span class="fas fa-user-tag"></span></div>
+                    <div class="form-group">
+                        <label for="level_id">Level</label>
+                        <div class="input-group mb-3">
+                            <select name="level_id" id="level_id" class="form-control" required>
+                                <option value="">-- Pilih Level --</option>
+                                @foreach($level as $level)
+                                    <option value="{{ $level->id }}">{{ $level->nama_level }}</option>
+                                @endforeach
+                            </select>
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-user-tag"></span>
+                                </div>
+                            </div>
                         </div>
+                        <small class="text-danger error-text" id="error-level_id"></small>
                     </div>
-                    <small class="text-danger error-text" id="error-level_kode"></small>
+
 
                     <div class="row">
                         <div class="col-8">

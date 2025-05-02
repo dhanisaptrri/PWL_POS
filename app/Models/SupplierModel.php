@@ -16,10 +16,11 @@ class SupplierModel extends Model
     public $timestamps = false;
 
   // di SupplierModel.php
-public function barang()
-{
-    return $this->hasMany(BarangModel::class, 'id_supplier', 'supplier_id');
-}
+  public function barang()
+  {
+      return $this->hasMany(BarangModel::class, 'supplier_id', 'supplier_id');
+  }
+  
 
 
 }

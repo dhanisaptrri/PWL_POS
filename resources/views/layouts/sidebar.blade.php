@@ -1,13 +1,24 @@
 <div class="sidebar">
-    <<!-- Profile -->
+
+    @php
+        $activeMenu = $activeMenu ?? '';
+    @endphp
+
+    <!-- Profile -->
     <li class="nav-item">
-         <a href="{{ route('profile.index') }}" class="nav-link {{ ($activeMenu == 'profile') ? 'active' : '' }}">
-             <!-- Jika foto ada, tampilkan foto profil, jika tidak tampilkan ikon default -->
-             <img src="{{ Auth::user()->foto ? asset('uploads/foto_user/' . Auth::user()->foto) : asset('default-avatar.png') }}" 
-                  class="img-circle elevation-2" alt="User Image" style="width: 30px; height: 30px;">
-             <p>Profil Saya</p>
-         </a>
-     </li>
+        <a href="{{ route('profile.index') }}" class="nav-link {{ ($activeMenu == 'profile') ? 'active' : '' }}">
+            <!-- Jika foto ada, tampilkan foto profil, jika tidak tampilkan ikon default -->
+            @if(Auth::check())
+                <img src="{{ Auth::user()->foto ? asset('uploads/foto_user/' . Auth::user()->foto) : asset('default-avatar.png') }}"
+                    class="img-circle elevation-2" alt="User Image" style="width: 30px; height: 30px;">
+            @else
+                <img src="{{ asset('default-avatar.png') }}"
+                    class="img-circle elevation-2" alt="User Image" style="width: 30px; height: 30px;">
+            @endif
+            <p>Profil Saya</p>
+        </a>
+    </li>
+
     <!-- SidebarSearch Form -->
     <div class="form-inline mt-2">
         <div class="input-group" data-widget="sidebar-search">
@@ -23,7 +34,7 @@
     <!-- Sidebar Menu -->
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            
+
             <!-- Dashboard -->
             <li class="nav-item">
                 <a href="{{ url('/') }}" class="nav-link {{ ($activeMenu == 'dashboard') ? 'active' : '' }}">
@@ -32,11 +43,11 @@
                 </a>
             </li>
             <li class="nav-item">
-             <a href="{{ url('/profil')}}" class="nav-link {{ ($activeMenu == 'profil') ? 'active' : '' }}">
-               <i class="nav-icon fas fa-user"></i>
-               <p>Profil</p>
-             </a>
-           </li>
+                <a href="{{ url('/profil') }}" class="nav-link {{ ($activeMenu == 'profil') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-user"></i>
+                    <p>Profil</p>
+                </a>
+            </li>
 
             <!-- Data Pengguna -->
             <li class="nav-header">Data Pengguna</li>
@@ -67,7 +78,6 @@
                     <p>Data Barang</p>
                 </a>
             </li>
-            
             <li class="nav-item">
                 <a href="{{ url('/supplier') }}" class="nav-link {{ ($activeMenu == 'supplier') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-truck"></i>
@@ -90,12 +100,12 @@
                 </a>
             </li>
 
+            <!-- Logout -->
             <li class="mt-5">
-             <a href="{{ url('/logout') }}" class="nav-link {{ ($activeMenu == 'logout') ? 'active' : '' }}">
-                 <button type="submit" class="btn btn-danger">Logout</button>
-             </a>
-          </li>
-
+                <a href="{{ url('/logout') }}" class="nav-link">
+                    <button type="submit" class="btn btn-danger w-100">Logout</button>
+                </a>
+            </li>
 
         </ul>
     </nav>

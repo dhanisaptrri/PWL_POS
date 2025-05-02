@@ -17,7 +17,7 @@ class StokSeeder extends Seeder
     {
         $data =[
             [
-                'barang_id' => 16,
+                'barang_id' => 1,
                 'supplier_id' => 1,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),
@@ -26,7 +26,7 @@ class StokSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'barang_id' => 17,
+                'barang_id' => 2,
                 'supplier_id' => 1,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),
@@ -35,7 +35,7 @@ class StokSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'barang_id' => 18,
+                'barang_id' => 3,
                 'supplier_id' => 1,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),
@@ -44,7 +44,7 @@ class StokSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'barang_id' => 19,
+                'barang_id' => 4,
                 'supplier_id' => 1,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),
@@ -53,7 +53,7 @@ class StokSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'barang_id' => 20,
+                'barang_id' => 5,
                 'supplier_id' => 1,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),
@@ -62,7 +62,7 @@ class StokSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'barang_id' => 21,
+                'barang_id' => 6,
                 'supplier_id' => 2,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),
@@ -71,7 +71,7 @@ class StokSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'barang_id' => 22,
+                'barang_id' => 7,
                 'supplier_id' => 2,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),
@@ -80,7 +80,7 @@ class StokSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'barang_id' => 23,
+                'barang_id' => 8,
                 'supplier_id' => 2,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),
@@ -89,7 +89,7 @@ class StokSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'barang_id' => 24,
+                'barang_id' => 9,
                 'supplier_id' => 2,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),
@@ -98,7 +98,7 @@ class StokSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'barang_id' => 25,
+                'barang_id' => 10,
                 'supplier_id' => 2,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),
@@ -107,7 +107,7 @@ class StokSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'barang_id' => 26,
+                'barang_id' => 11,
                 'supplier_id' => 3,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),
@@ -116,7 +116,7 @@ class StokSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'barang_id' => 27,
+                'barang_id' => 12,
                 'supplier_id' => 3,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),
@@ -125,7 +125,7 @@ class StokSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'barang_id' => 28,
+                'barang_id' => 13,
                 'supplier_id' => 3,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),
@@ -134,7 +134,7 @@ class StokSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'barang_id' => 29,
+                'barang_id' => 14,
                 'supplier_id' => 3,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),
@@ -143,7 +143,7 @@ class StokSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'barang_id' => 30,
+                'barang_id' => 15,
                 'supplier_id' => 3,
                 'user_id' => 1,
                 'stok_tanggal' => Carbon::now(),

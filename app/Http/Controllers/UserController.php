@@ -437,4 +437,6 @@ class UserController extends Controller
         $pdf->render();
         return $pdf->stream('Data User '.date('Y-m-d H:i:s').'.pdf');
     }
+
+    
 }

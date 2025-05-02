@@ -14,27 +14,36 @@ class PenjualanDetailSeeder extends Seeder
      */
     public function run(): void
     {
-        // Pastikan ID penjualan dan barang ada di database
-        $penjualanIds = DB::table('t_penjualan')->pluck('penjualan_id')->toArray();
-        $barangIds = DB::table('m_barang')->pluck('barang_id')->toArray();
-        
-        if (empty($penjualanIds) || empty($barangIds)) {
-            Log::warning('Seeder gagal: Tidak ada data di t_penjualan atau m_barang.');
-            return;
-        }
-        
-        $data = [];
-        for ($i = 0; $i < 5; $i++) {
-            $data[] = [
-                'penjualan_id' => $penjualanIds[array_rand($penjualanIds)],
-                'barang_id' => $barangIds[array_rand($barangIds)],
-                'harga' => rand(5000, 50000), // Harga acak antara 5.000 - 50.000
-                'jumlah' => rand(1, 10), // Jumlah acak antara 1 - 10
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ];
-        }
+        // Ambil data dari t_penjualan
+        $penjualan = DB::table('t_penjualan')->get();
+        $data = [
 
+            ['penjualan_id' => 1,
+            'barang_id' => 1,
+            'harga' => 10000,
+            'jumlah' => 2,
+        ],
+            ['penjualan_id' => 1,
+            'barang_id' => 2,
+            'harga' => 20000,
+            'jumlah' => 1,
+        ],
+            ['penjualan_id' => 2,
+            'barang_id' => 3,
+            'harga' => 15000,
+            'jumlah' => 3,
+        ],
+            ['penjualan_id' => 2,
+            'barang_id' => 4,
+            'harga' => 25000,
+            'jumlah' => 1,
+        ],
+            ['penjualan_id' => 3,
+            'barang_id' => 5,
+            'harga' => 30000,
+            'jumlah' => 2,
+        ]
+        ];
         DB::table('t_penjualan_detail')->insert($data);
     }
 }

@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use App\Models\UserModel;
  use App\Models\LevelModel;
+ 
  use Illuminate\Support\Facades\Hash;
  use Illuminate\Support\Facades\Validator;
  
@@ -59,11 +62,12 @@ class AuthController extends Controller
      public function postregister(Request $request)
      {
          if ($request->ajax() || $request->wantsJson()) {
-             $validator = Validator::make($request->all(), [
-                 'username' => 'required|string|min:4|max:20|unique:m_user,username',
-                 'nama'     => 'required|string|max:50',
-                 'password' => 'required|string|min:5|max:20',
-             ]);
+            $validator = Validator::make($request->all(), [
+                'username'  => 'required|string|min:4|max:20|unique:m_user,username',
+                'nama'      => 'required|string|max:50',
+                'password'  => 'required|string|min:5|max:20',
+                'level_id'  => 'required|exists:m_level,id', // pastikan level_id valid
+            ]);
      
              if ($validator->fails()) {
                  return response()->json([
@@ -74,11 +78,11 @@ class AuthController extends Controller
              }
      
              UserModel::create([
-                 'username' => $request->username,
-                 'nama' => $request->nama,
-                 'password' => $request->password,
-                 'level_id' => 2 // default level_id untuk user biasa
-             ]);
+                'username'  => $request->username,
+                'nama'      => $request->nama,
+                'password'  => Hash::make($request->password), // jangan lupa hashing!
+                'level_id'  => $request->level_id,
+            ]);
      
              return response()->json([
                  'status' => true,

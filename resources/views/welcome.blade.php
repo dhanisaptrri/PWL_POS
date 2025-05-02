@@ -1,72 +1,129 @@
 @extends('layouts.template')
 
 @section('content')
-
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Halo, apa kabar!!!</h3>
-        <div class="card-tools"></div>
+<div class="row">
+    <!-- Total Revenue Card -->
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-primary">
+            <div class="inner">
+                <h3>Rp {{ number_format($totalRevenue ?? 0, 0, ',', '.') }}</h3>
+                <p>Total Pendapatan</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <a href="{{ url('/penjualan') }}" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
     </div>
 
-    <div class="card-body">
-        Selamat datang semua, ini adalah halaman utama dari aplikasi ini.
+    <!-- Total Penjualan Card -->
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>{{ $totalPenjualan ?? 0 }}</h3>
+                <p>Total Transaksi</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <a href="{{ url('/penjualan') }}" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Total Barang Card -->
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>{{ $totalBarang ?? 0 }}</h3>
+                <p>Total Produk</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-boxes"></i>
+            </div>
+            <a href="{{ url('/barang') }}" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Total Kategori Card -->
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>{{ $totalKategori ?? 0 }}</h3>
+                <p>Total Kategori</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-tags"></i>
+            </div>
+            <a href="{{ url('/kategori') }}" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <!-- Top Products -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Produk Terlaris</h3>
+            </div>
+            <div class="card-body p-0">
+                <ul class="products-list product-list-in-card pl-2 pr-2">
+                    @forelse($topProducts ?? [] as $product)
+                    <li class="item">
+                        <div class="product-info">
+                            <a href="javascript:void(0)" class="product-title">
+                                {{ $product->barang_nama }}
+                                <span class="badge badge-info float-right">{{ $product->total_sold }} Terjual</span>
+                            </a>
+                        </div>
+                    </li>
+                    @empty
+                    <li class="item">
+                        <div class="product-info text-center">
+                            Tidak ada data penjualan
+                        </div>
+                    </li>
+                    @endforelse
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stok Menipis -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Stok Menipis</h3>
+            </div>
+            <div class="card-body p-0">
+                <ul class="products-list product-list-in-card pl-2 pr-2">
+                    @forelse($lowStock ?? [] as $item)
+                    <li class="item">
+                        <div class="product-info">
+                            <a href="javascript:void(0)" class="product-title">
+                                {{ $item->barang_nama }}
+                                <span class="badge badge-danger float-right">Stok: {{ $item->stok }}</span>
+                            </a>
+                        </div>
+                    </li>
+                    @empty
+                    <li class="item">
+                        <div class="product-info text-center">
+                            Semua stok dalam kondisi aman
+                        </div>
+                    </li>
+                    @endforelse
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const ctx = document.getElementById('salesChart');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: JSON.parse('{!! json_encode($chartLabels ?? []) !!}'),
-            datasets: [{
-                label: 'Jumlah Transaksi',
-                data: JSON.parse('{!! json_encode($chartData['transactions'] ?? []) !!}'),
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1,
-                yAxisID: 'y'
-            },
-            {
-                label: 'Pendapatan (Rp)',
-                data: JSON.parse('{!! json_encode($chartData['revenue'] ?? []) !!}'),
-                borderColor: 'rgb(255, 99, 132)',
-                tension: 0.1,
-                yAxisID: 'y1'
-            }]
-        },
-        options: {
-            responsive: true,
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
-            scales: {
-                y: {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
-                    title: {
-                        display: true,
-                        text: 'Jumlah Transaksi'
-                    }
-                },
-                y1: {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-                    title: {
-                        display: true,
-                        text: 'Pendapatan (Rp)'
-                    },
-                    grid: {
-                        drawOnChartArea: false
-                    }
-                }
-            }
-        }
-    });
-</script>
-@endpush
 @endsection
